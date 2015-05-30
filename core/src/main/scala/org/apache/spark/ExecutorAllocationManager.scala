@@ -44,7 +44,7 @@ import org.apache.spark.util.{Clock, SystemClock, Utils}
  *
  * The rationale for the exponential increase is twofold: (1) Executors should be added slowly
  * in the beginning in case the number of extra executors needed turns out to be small. Otherwise,
- * we may add more executors than we need just to remove them later. (2) Executors should be added
+ * we may add more executors than we need just to remove them later; (2) Executors should be added
  * quickly over time in case the maximum number of executors is very high. Otherwise, it will take
  * a long time to ramp up under heavy workloads.
  *
