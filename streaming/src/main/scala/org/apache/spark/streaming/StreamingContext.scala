@@ -20,6 +20,8 @@ package org.apache.spark.streaming
 import java.io.InputStream
 import java.util.concurrent.atomic.AtomicInteger
 
+import pt.inescid.gsd.art.ArtManager
+
 import scala.collection.Map
 import scala.collection.mutable.Queue
 import scala.reflect.ClassTag
@@ -111,6 +113,9 @@ class StreamingContext private[streaming] (
     throw new Exception("Spark Streaming cannot be initialized with " +
       "both SparkContext and checkpoint as null")
   }
+
+  // SROE
+  private[streaming] val art = ArtManager(this)
 
   private[streaming] val isCheckpointPresent = (cp_ != null)
 
