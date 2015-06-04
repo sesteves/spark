@@ -115,7 +115,7 @@ class StreamingContext private[streaming] (
   }
 
   // SROE
-  private[streaming] val art = ArtManager(this)
+  private[streaming] val artManager = new ArtManager(this)
 
   private[streaming] val isCheckpointPresent = (cp_ != null)
 

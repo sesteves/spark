@@ -160,7 +160,7 @@ class JobScheduler(val ssc: StreamingContext) extends Logging {
           ))
 
           // SROE
-          // ssc.
+          ssc.artManager.updateExecutionTime(jobSet.totalDelay, jobSet.processingDelay)
 
           listenerBus.post(StreamingListenerBatchCompleted(jobSet.toBatchInfo))
         }
