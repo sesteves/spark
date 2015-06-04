@@ -158,6 +158,10 @@ class JobScheduler(val ssc: StreamingContext) extends Logging {
             jobSet.totalDelay / 1000.0, jobSet.time.toString,
             jobSet.processingDelay / 1000.0
           ))
+
+          // SROE
+          // ssc.
+
           listenerBus.post(StreamingListenerBatchCompleted(jobSet.toBatchInfo))
         }
       case Failure(e) =>
