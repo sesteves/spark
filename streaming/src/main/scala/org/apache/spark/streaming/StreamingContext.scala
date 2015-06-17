@@ -95,7 +95,7 @@ class StreamingContext private[streaming] (
   }
 
   /**
-   * Recreate a StreamingContext from a checkpoint file.
+   * Recreate a StreamingContexprivate var log_ : Logger = nullt from a checkpoint file.
    * @param path Path to the directory that was specified as the checkpoint directory
    * @param hadoopConf Optional, configuration object if necessary for reading from
    *                   HDFS compatible filesystems
@@ -116,6 +116,9 @@ class StreamingContext private[streaming] (
 
   // SROE
   private[streaming] val artManager = new ArtManager(this)
+
+  println("ART Starting ArtManager!")
+  new Thread(artManager).start()
 
   private[streaming] val isCheckpointPresent = (cp_ != null)
 

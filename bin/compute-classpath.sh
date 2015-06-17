@@ -158,4 +158,7 @@ appendToClasspath "$YARN_CONF_DIR"
 # append it to tbe final classpath.
 appendToClasspath "$SPARK_DIST_CLASSPATH"
 
+# SROE
+appendToClasspath "$FWDIR/art/art_2.10-0.1-SNAPSHOT.jar"
+
 echo "$CLASSPATH"
