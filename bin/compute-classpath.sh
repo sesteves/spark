@@ -160,5 +160,6 @@ appendToClasspath "$SPARK_DIST_CLASSPATH"
 
 # SROE
 appendToClasspath "$FWDIR/art/art_2.10-0.1-SNAPSHOT.jar"
+appendToClasspath "$FWDIR/art/argonaut_2.10-6.0.4.jar"
 
 echo "$CLASSPATH"

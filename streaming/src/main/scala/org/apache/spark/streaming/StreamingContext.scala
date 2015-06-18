@@ -114,12 +114,6 @@ class StreamingContext private[streaming] (
       "both SparkContext and checkpoint as null")
   }
 
-  // SROE
-  private[streaming] val artManager = new ArtManager(this)
-
-  println("ART Starting ArtManager!")
-  new Thread(artManager).start()
-
   private[streaming] val isCheckpointPresent = (cp_ != null)
 
   private[streaming] val sc: SparkContext = {
@@ -136,6 +130,14 @@ class StreamingContext private[streaming] (
   }
 
   private[streaming] val conf = sc.conf
+
+
+  // SROE
+  private[streaming] val artManager = new ArtManager(this, conf)
+
+  println("ART Starting ArtManager!")
+  new Thread(artManager).start()
+
 
   private[streaming] val env = SparkEnv.get
 
