@@ -25,6 +25,7 @@ import pt.inescid.gsd.art.ArtManager
 import scala.collection.Map
 import scala.collection.mutable.Queue
 import scala.reflect.ClassTag
+import scala.util.Random
 
 import akka.actor.{Props, SupervisorStrategy}
 import org.apache.hadoop.conf.Configuration
@@ -473,7 +474,12 @@ class StreamingContext private[streaming] (
    * Create a unified DStream from multiple DStreams of the same type and same slide duration.
    */
   def union[T: ClassTag](streams: Seq[DStream[T]]): DStream[T] = {
-    new UnionDStream[T](streams.toArray)
+    // SROE: added filtering
+    // new UnionDStream[T](streams.toArray)
+    val currentAccuracy = artManager.currentAccuracy
+    new UnionDStream[T](streams.toArray).filter(_ => {
+      println("##### CURRENT ACCURACY: " + currentAccuracy);
+      Random.nextDouble() < currentAccuracy})
   }
 
   /**
