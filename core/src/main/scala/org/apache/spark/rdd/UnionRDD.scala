@@ -66,8 +66,15 @@ class UnionRDD[T: ClassTag](
     val array = new Array[Partition](rdds.map(_.partitions.size).sum)
     var pos = 0
     for ((rdd, rddIndex) <- rdds.zipWithIndex; split <- rdd.partitions) {
-      array(pos) = new UnionPartition(pos, rdd, rddIndex, split.index)
+      //array(pos) = new UnionPartition(pos, rdd, rddIndex, split.index)
+      //pos += 1
+
+      // SROE
+      val up = new UnionPartition(pos, rdd, rddIndex, split.index)
+      array(pos) = up
+      println("##### rdd.toString: " + rdd.toString + " :: union partition: ")
       pos += 1
+
     }
     array
   }
@@ -84,7 +91,25 @@ class UnionRDD[T: ClassTag](
 
   override def compute(s: Partition, context: TaskContext): Iterator[T] = {
     val part = s.asInstanceOf[UnionPartition[T]]
-    parent[T](part.parentRddIndex).iterator(part.parentPartition, context)
+    //parent[T](part.parentRddIndex).iterator(part.parentPartition, context)
+
+    // SROE
+    var it = parent[T](part.parentRddIndex).iterator(part.parentPartition, context)
+
+
+    if(it.hasNext)
+      println("##### Next in iterator" + it.next)
+    if(it.hasNext)
+      println("##### Next in iterator" + it.next)
+    if(it.hasNext)
+      println("##### Next in iterator" + it.next)
+    if(it.hasNext)
+      println("##### Next in iterator" + it.next)
+    if(it.hasNext)
+      println("##### Next in iterator" + it.next)
+
+
+    it
   }
 
   override def getPreferredLocations(s: Partition): Seq[String] =
