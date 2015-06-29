@@ -23,6 +23,7 @@ import org.apache.spark.rdd.UnionRDD
 
 import scala.collection.mutable.ArrayBuffer
 import scala.reflect.ClassTag
+import scala.util.Random
 
 private[streaming]
 class UnionDStream[T: ClassTag](parents: Array[DStream[T]])
@@ -40,7 +41,9 @@ class UnionDStream[T: ClassTag](parents: Array[DStream[T]])
   override def compute(validTime: Time): Option[RDD[T]] = {
     val rdds = new ArrayBuffer[RDD[T]]()
     parents.map(_.getOrCompute(validTime)).foreach(_ match {
-      case Some(rdd) => rdds += rdd
+      // SROE
+      // case Some(rdd) => rdds += rdd
+      case Some(rdd) => { println("##### Random No.: " + Random.nextDouble()); rdds += rdd }
       case None => throw new Exception("Could not generate RDD from a parent for unifying at time "
         + validTime)
     })
