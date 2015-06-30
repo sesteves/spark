@@ -17,6 +17,8 @@
 
 package org.apache.spark
 
+import pt.inescid.gsd.art.ArtManager
+
 import scala.language.implicitConversions
 
 import java.io._
@@ -101,6 +103,16 @@ class SparkContext(config: SparkConf) extends Logging with ExecutorAllocationCli
     if (stopped) {
       throw new IllegalStateException("Cannot call methods on a stopped SparkContext")
     }
+  }
+
+  // SROE
+  // temporary
+  var artManager: ArtManager
+
+  // SROE
+  def this(config: SparkConf, artManager: ArtManager) {
+    this(new SparkConf())
+    this.artManager = artManager
   }
 
   /**

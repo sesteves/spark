@@ -72,7 +72,14 @@ class UnionRDD[T: ClassTag](
       // SROE
       val up = new UnionPartition(pos, rdd, rddIndex, split.index)
       array(pos) = up
-      println("##### rdd.toString: " + rdd.toString + " :: union partition: ")
+
+
+//      println("##### No. of partitions per rdd: " + rdd.partitions.size)
+//      val part = rdd.partitions.take(1).asInstanceOf[UnionPartition[T]]
+//      parent[T](part.parentRddIndex).iterator()
+//      println("##### Partition content: " + part)
+//      println("##### artManager.currentAccuracy: " + sc.artManager.currentAccuracy)
+
       pos += 1
 
     }
@@ -97,17 +104,21 @@ class UnionRDD[T: ClassTag](
     var it = parent[T](part.parentRddIndex).iterator(part.parentPartition, context)
 
 
-    if(it.hasNext)
+    if(it.hasNext) {
       println("##### Next in iterator" + it.next)
-    if(it.hasNext)
+    }
+    if(it.hasNext) {
       println("##### Next in iterator" + it.next)
-    if(it.hasNext)
+    }
+    if(it.hasNext) {
       println("##### Next in iterator" + it.next)
-    if(it.hasNext)
+    }
+    if(it.hasNext) {
       println("##### Next in iterator" + it.next)
-    if(it.hasNext)
+    }
+    if(it.hasNext) {
       println("##### Next in iterator" + it.next)
-
+    }
 
     it
   }
