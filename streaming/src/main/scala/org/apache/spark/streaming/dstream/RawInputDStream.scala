@@ -20,6 +20,7 @@ package org.apache.spark.streaming.dstream
 import org.apache.spark.{Logging, SparkEnv}
 import org.apache.spark.storage.{StorageLevel, StreamBlockId}
 import org.apache.spark.streaming.StreamingContext
+import pt.inescid.gsd.art.ArtManager
 
 import scala.reflect.ClassTag
 
@@ -46,13 +47,20 @@ class RawInputDStream[T: ClassTag](
   ) extends ReceiverInputDStream[T](ssc_ ) with Logging {
 
   def getReceiver(): Receiver[T] = {
-    new RawNetworkReceiver(host, port, storageLevel).asInstanceOf[Receiver[T]]
+    new RawNetworkReceiver(host, port, storageLevel, ssc.artManager).asInstanceOf[Receiver[T]]
   }
 }
 
 private[streaming]
 class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
   extends Receiver[Any](storageLevel) with Logging {
+
+  var artManager: ArtManager = null
+
+  def this(host: String, port: Int, storageLevel: StorageLevel, artManager: ArtManager) {
+    this(host, port, storageLevel)
+    this.artManager = artManager
+  }
 
   var blockPushingThread: Thread = null
 
@@ -91,7 +99,10 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
       logInfo("Read a block with " + length + " bytes")
 
       // SROE
-      println("#####")
+      // discard sentences in blocks or blocks
+      println("##### dataBuffer contents: " + new String(dataBuffer.array()))
+
+      println("##### ArtManager currentAccuracy: " + artManager.currentAccuracy)
 
       queue.put(dataBuffer)
     }
@@ -104,11 +115,6 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
   /** Read a buffer fully from a given Channel */
   private def readFully(channel: ReadableByteChannel, dest: ByteBuffer) {
     while (dest.position < dest.limit) {
-      // SROE
-      val dataBuffer = ByteBuffer.allocate(ByteBuffer.allocate(4).getInt)
-      channel.read(dataBuffer)
-      println("##### rawInputDStream dataBuffer: " + new String(dataBuffer.array()))
-
       if (channel.read(dest) == -1) {
         throw new EOFException("End of channel")
       }
