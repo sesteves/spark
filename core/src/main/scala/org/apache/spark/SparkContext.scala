@@ -107,13 +107,13 @@ class SparkContext(config: SparkConf) extends Logging with ExecutorAllocationCli
 
   // SROE
   // temporary
-  var artManager: ArtManager
+//  var artManager: ArtManager = null
 
   // SROE
-  def this(config: SparkConf, artManager: ArtManager) {
-    this(new SparkConf())
-    this.artManager = artManager
-  }
+//  def this(config: SparkConf, artManager: ArtManager) {
+//    this(new SparkConf())
+//    this.artManager = artManager
+//  }
 
   /**
    * Create a SparkContext that loads settings from system properties (for instance, when

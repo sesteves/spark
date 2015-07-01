@@ -89,6 +89,10 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
       readFully(channel, dataBuffer)
       dataBuffer.flip()
       logInfo("Read a block with " + length + " bytes")
+
+      // SROE
+      println("#####")
+
       queue.put(dataBuffer)
     }
   }
@@ -100,6 +104,11 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
   /** Read a buffer fully from a given Channel */
   private def readFully(channel: ReadableByteChannel, dest: ByteBuffer) {
     while (dest.position < dest.limit) {
+      // SROE
+      val dataBuffer = ByteBuffer.allocate(ByteBuffer.allocate(4).getInt)
+      channel.read(dataBuffer)
+      println("##### rawInputDStream dataBuffer: " + new String(dataBuffer.array()))
+
       if (channel.read(dest) == -1) {
         throw new EOFException("End of channel")
       }

@@ -69,23 +69,16 @@ class StreamingContext private[streaming] (
     this(sparkContext, null, batchDuration)
   }
 
-
-  // SROE
-  private[streaming] val artManager = new ArtManager(this, conf)
-
-  println("ART Starting ArtManager!")
-  new Thread(artManager).start()
-
   /**
    * Create a StreamingContext by providing the configuration necessary for a new SparkContext.
    * @param conf a org.apache.spark.SparkConf object specifying Spark parameters
    * @param batchDuration the time interval at which streaming data will be divided into batches
    */
   def this(conf: SparkConf, batchDuration: Duration) = {
-    //this(StreamingContext.createNewSparkContext(conf), null, batchDuration)
+    this(StreamingContext.createNewSparkContext(conf), null, batchDuration)
     // SROE
     // FIXME ArtManager should be located in SparkContext
-    this(StreamingContext.createNewSparkContext(conf, artManager), null, batchDuration)
+    // this(StreamingContext.createNewSparkContext(conf, artManager), null, batchDuration)
   }
 
   /**
@@ -143,6 +136,14 @@ class StreamingContext private[streaming] (
   private[streaming] val conf = sc.conf
 
   private[streaming] val env = SparkEnv.get
+
+  // SROE
+  private[streaming] val artManager = new ArtManager(this, conf)
+
+  println("ART Starting ArtManager!")
+  new Thread(artManager).start()
+
+
 
   private[streaming] val graph: DStreamGraph = {
     if (isCheckpointPresent) {
@@ -664,9 +665,10 @@ object StreamingContext extends Logging {
   }
 
   // SROE
-  private[streaming] def createNewSparkContext(conf: SparkConf, artManager: ArtManager): SparkContext = {
-    new SparkContext(conf, artManager)
-  }
+//  private[streaming] def createNewSparkContext(conf: SparkConf,
+// artManager: ArtManager): SparkContext = {
+//    new SparkContext(conf, artManager)
+//  }
 
   private[streaming] def createNewSparkContext(
       master: String,

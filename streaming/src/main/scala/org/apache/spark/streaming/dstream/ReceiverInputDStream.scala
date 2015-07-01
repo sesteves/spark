@@ -81,6 +81,9 @@ abstract class ReceiverInputDStream[T: ClassTag](@transient ssc_ : StreamingCont
         // If all the results are of type WriteAheadLogBasedStoreResult, then create
         // WriteAheadLogBackedBlockRDD else create simple BlockRDD.
         if (resultTypes.size == 1 && resultTypes.head == classOf[WriteAheadLogBasedStoreResult]) {
+          // SROE
+          println("##### results are of type WriteAheadLogBasedStoreResult")
+
           val logSegments = blockStoreResults.map {
             _.asInstanceOf[WriteAheadLogBasedStoreResult].segment
           }.toArray
@@ -88,6 +91,8 @@ abstract class ReceiverInputDStream[T: ClassTag](@transient ssc_ : StreamingCont
           new WriteAheadLogBackedBlockRDD[T](ssc.sparkContext,
             blockIds, logSegments, storeInBlockManager = false, StorageLevel.MEMORY_ONLY_SER)
         } else {
+          println("##### Creating new BlockRDD")
+
           new BlockRDD[T](ssc.sc, blockIds)
         }
       }
