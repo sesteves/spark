@@ -101,7 +101,7 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
       // SROE
       // discard lines in blocks or blocks
       println("##### dataBuffer contents: " + new String(dataBuffer.array()))
-
+      println("##### ArtManager location: " + artManager)
       println("##### ArtManager currentAccuracy: " + artManager.currentAccuracy)
 
       queue.put(dataBuffer)

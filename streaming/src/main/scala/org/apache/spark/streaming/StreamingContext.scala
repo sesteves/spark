@@ -140,7 +140,7 @@ class StreamingContext private[streaming] (
   // SROE
   @transient private[streaming] val artManager = new ArtManager(this, conf)
 
-  println("ART Starting ArtManager!")
+  println("ART Starting ArtManager! location: " + artManager )
   new Thread(artManager).start()
 
 
