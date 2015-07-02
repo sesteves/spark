@@ -99,7 +99,7 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
       logInfo("Read a block with " + length + " bytes")
 
       // SROE
-      // discard sentences in blocks or blocks
+      // discard lines in blocks or blocks
       println("##### dataBuffer contents: " + new String(dataBuffer.array()))
 
       println("##### ArtManager currentAccuracy: " + artManager.currentAccuracy)

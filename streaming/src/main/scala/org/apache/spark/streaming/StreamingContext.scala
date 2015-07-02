@@ -138,7 +138,7 @@ class StreamingContext private[streaming] (
   private[streaming] val env = SparkEnv.get
 
   // SROE
-  private[streaming] val artManager = new ArtManager(this, conf)
+  @transient private[streaming] val artManager = new ArtManager(this, conf)
 
   println("ART Starting ArtManager!")
   new Thread(artManager).start()
