@@ -17,10 +17,12 @@
 
 package org.apache.spark.streaming.dstream
 
+import java.rmi.registry.LocateRegistry
+
 import org.apache.spark.{Logging, SparkEnv}
 import org.apache.spark.storage.{StorageLevel, StreamBlockId}
 import org.apache.spark.streaming.StreamingContext
-import pt.inescid.gsd.art.ArtManager
+import pt.inescid.gsd.art.{RemoteArtManager, ArtManager}
 
 import scala.reflect.ClassTag
 
@@ -103,6 +105,12 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
       println("##### dataBuffer contents: " + new String(dataBuffer.array()))
       println("##### ArtManager location: " + artManager)
       println("##### ArtManager currentAccuracy: " + artManager.currentAccuracy)
+
+
+      val registry = LocateRegistry.getRegistry("ginja-a1")
+      val stub = registry.lookup(artManager.ArtServiceName).asInstanceOf[RemoteArtManager]
+
+      println("##### ArtManager currentAccuracy RMI: " + stub.getAccuracy())
 
       queue.put(dataBuffer)
     }
