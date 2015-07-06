@@ -24,14 +24,17 @@ import org.apache.spark.storage.{StorageLevel, StreamBlockId}
 import org.apache.spark.streaming.StreamingContext
 import pt.inescid.gsd.art.{RemoteArtManager, ArtManager}
 
+import scala.io.BufferedSource
 import scala.reflect.ClassTag
 
-import java.net.InetSocketAddress
+import java.net.{Socket, InetAddress, InetSocketAddress}
 import java.nio.ByteBuffer
 import java.nio.channels.{ReadableByteChannel, SocketChannel}
-import java.io.EOFException
+import java.io.{PrintStream, EOFException}
 import java.util.concurrent.ArrayBlockingQueue
 import org.apache.spark.streaming.receiver.Receiver
+
+import scala.util.Random
 
 
 /**
@@ -49,7 +52,8 @@ class RawInputDStream[T: ClassTag](
   ) extends ReceiverInputDStream[T](ssc_ ) with Logging {
 
   def getReceiver(): Receiver[T] = {
-    new RawNetworkReceiver(host, port, storageLevel, ssc.artManager).asInstanceOf[Receiver[T]]
+    // new RawNetworkReceiver(host, port, storageLevel, ssc.artManager).asInstanceOf[Receiver[T]]
+    new RawNetworkReceiver(host, port, storageLevel).asInstanceOf[Receiver[T]]
   }
 }
 
@@ -57,12 +61,12 @@ private[streaming]
 class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
   extends Receiver[Any](storageLevel) with Logging {
 
-  var artManager: ArtManager = null
+  // var artManager: ArtManager = null
 
-  def this(host: String, port: Int, storageLevel: StorageLevel, artManager: ArtManager) {
-    this(host, port, storageLevel)
-    this.artManager = artManager
-  }
+//  def this(host: String, port: Int, storageLevel: StorageLevel, artManager: ArtManager) {
+//    this(host, port, storageLevel)
+//    this.artManager = artManager
+//  }
 
   var blockPushingThread: Thread = null
 
@@ -102,17 +106,26 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
 
       // SROE
       // discard lines in blocks or blocks
-      println("##### dataBuffer contents: " + new String(dataBuffer.array()))
-      println("##### ArtManager location: " + artManager)
-      println("##### ArtManager currentAccuracy: " + artManager.currentAccuracy)
+//      println("##### dataBuffer contents: " + new String(dataBuffer.array()))
+//      println("##### ArtManager location: " + artManager)
+//      println("##### ArtManager currentAccuracy: " + artManager.accuracy)
 
 
-      val registry = LocateRegistry.getRegistry("ginja-a1")
-      val stub = registry.lookup(artManager.ArtServiceName).asInstanceOf[RemoteArtManager]
+//      val registry = LocateRegistry.getRegistry("ginja-a1")
+//      val stub = registry.lookup(artManager.ArtServiceName).asInstanceOf[RemoteArtManager]
+//      println("##### ArtManager currentAccuracy RMI: " + stub.getAccuracy())
 
-      println("##### ArtManager currentAccuracy RMI: " + stub.getAccuracy())
+      // FIXME maintain same socket always open
+      val s = new Socket(InetAddress.getByName("ginja-a1"), 9999)
+      val in = new BufferedSource(s.getInputStream()).getLines()
+      val out = new PrintStream(s.getOutputStream())
+      val accuracy = in.next().toDouble
+      s.close()
+      println("##### ArtManager currentAccuracy Socket: " + accuracy)
 
-      queue.put(dataBuffer)
+      if(Random.nextInt(100) < accuracy) {
+        queue.put(dataBuffer)
+      }
     }
   }
 

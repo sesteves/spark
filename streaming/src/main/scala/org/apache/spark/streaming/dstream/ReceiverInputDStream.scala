@@ -91,8 +91,6 @@ abstract class ReceiverInputDStream[T: ClassTag](@transient ssc_ : StreamingCont
           new WriteAheadLogBackedBlockRDD[T](ssc.sparkContext,
             blockIds, logSegments, storeInBlockManager = false, StorageLevel.MEMORY_ONLY_SER)
         } else {
-          println("##### Creating new BlockRDD")
-
           new BlockRDD[T](ssc.sc, blockIds)
         }
       }

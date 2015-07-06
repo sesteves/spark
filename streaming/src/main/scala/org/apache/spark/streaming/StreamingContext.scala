@@ -139,10 +139,7 @@ class StreamingContext private[streaming] (
 
   // SROE
   @transient private[streaming] val artManager = new ArtManager(this, conf)
-
   println("ART Starting ArtManager! location: " + artManager )
-  new Thread(artManager).start()
-
 
 
   private[streaming] val graph: DStreamGraph = {
@@ -480,11 +477,11 @@ class StreamingContext private[streaming] (
     // SROE: added filtering
     // new UnionDStream[T](streams.toArray)
     println("##### Retrieving currentAccuracy from ArtManager")
-    val currentAccuracy = artManager.currentAccuracy
-    new UnionDStream[T](streams.toArray).filter(_ => {
-      println("##### CURRENT ACCURACY: " + currentAccuracy);
-      println("##### RANDOM DOUBLE: " + Random.nextDouble())
-      Random.nextDouble() < currentAccuracy})
+    val currentAccuracy = artManager.accuracy
+    new UnionDStream[T](streams.toArray)
+//      .filter(_ => {
+//      println("##### CURRENT ACCURACY: " + currentAccuracy);
+//      Random.nextDouble() < currentAccuracy})
   }
 
   /**

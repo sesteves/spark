@@ -41,9 +41,7 @@ class UnionDStream[T: ClassTag](parents: Array[DStream[T]])
   override def compute(validTime: Time): Option[RDD[T]] = {
     val rdds = new ArrayBuffer[RDD[T]]()
     parents.map(_.getOrCompute(validTime)).foreach(_ match {
-      // SROE
-      // case Some(rdd) => rdds += rdd
-      case Some(rdd) => { println("##### Random No.: " + Random.nextDouble()); rdds += rdd }
+      case Some(rdd) => rdds += rdd
       case None => throw new Exception("Could not generate RDD from a parent for unifying at time "
         + validTime)
     })
