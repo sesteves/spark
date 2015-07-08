@@ -98,29 +98,7 @@ class UnionRDD[T: ClassTag](
 
   override def compute(s: Partition, context: TaskContext): Iterator[T] = {
     val part = s.asInstanceOf[UnionPartition[T]]
-    //parent[T](part.parentRddIndex).iterator(part.parentPartition, context)
-
-    // SROE
-    var it = parent[T](part.parentRddIndex).iterator(part.parentPartition, context)
-
-
-    if(it.hasNext) {
-      println("##### Next in iterator" + it.next)
-    }
-    if(it.hasNext) {
-      println("##### Next in iterator" + it.next)
-    }
-    if(it.hasNext) {
-      println("##### Next in iterator" + it.next)
-    }
-    if(it.hasNext) {
-      println("##### Next in iterator" + it.next)
-    }
-    if(it.hasNext) {
-      println("##### Next in iterator" + it.next)
-    }
-
-    it
+    parent[T](part.parentRddIndex).iterator(part.parentPartition, context)
   }
 
   override def getPreferredLocations(s: Partition): Seq[String] =
