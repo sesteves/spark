@@ -39,11 +39,6 @@ class BlockRDD[T: ClassTag](@transient sc: SparkContext, @transient val blockIds
     (0 until blockIds.size).map(i => {
       val blockManager = SparkEnv.get.blockManager
       val Some(block) =  blockManager.get(blockIds(i))
-
-      for(d <- block.data.take(5)) {
-        println("##### BlockResult: d class: " + d.getClass + " :: d: " + d)
-      }
-
       new BlockRDDPartition(blockIds(i), i).asInstanceOf[Partition]
     }).toArray
     // SROE
