@@ -95,6 +95,9 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
 
     val lengthBuffer = ByteBuffer.allocate(4)
     while (true) {
+
+      val startTick = System.currentTimeMillis()
+
       lengthBuffer.clear()
       readFully(channel, lengthBuffer)
       lengthBuffer.flip()
@@ -102,7 +105,11 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
       val dataBuffer = ByteBuffer.allocate(length)
       readFully(channel, dataBuffer)
       dataBuffer.flip()
-      logInfo("Read a block with " + length + " bytes")
+      // logInfo("Read a block with " + length + " bytes")
+
+      val duration = System.currentTimeMillis() - startTick
+      val rate = length / duration
+      logInfo(s"Read a block with $length bytes in $duration millis. Ingestion Rate: $rate bytes/millis")
 
       // SROE
       // discard lines in blocks or blocks
@@ -119,6 +126,8 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
       val s = new Socket(InetAddress.getByName("ginja-a1"), 9999)
       val in = new BufferedSource(s.getInputStream()).getLines()
       val out = new PrintStream(s.getOutputStream())
+      out.println(rate)
+      out.flush()
       val accuracy = in.next().toDouble
       s.close()
       println("##### ArtManager currentAccuracy Socket: " + accuracy)
