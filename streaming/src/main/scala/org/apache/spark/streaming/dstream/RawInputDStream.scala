@@ -109,7 +109,8 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
 
       val duration = System.currentTimeMillis() - startTick
       val rate = length / duration
-      logInfo(s"Read a block with $length bytes in $duration millis. Ingestion Rate: $rate bytes/millis")
+      logInfo(s"Read a block with $length bytes in $duration millis. " +
+        "Ingestion Rate: $rate bytes/millis")
 
       // SROE
       // discard lines in blocks or blocks

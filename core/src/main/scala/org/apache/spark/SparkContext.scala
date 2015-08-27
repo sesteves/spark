@@ -1210,6 +1210,25 @@ class SparkContext(config: SparkConf) extends Logging with ExecutorAllocationCli
   @DeveloperApi
   override def killExecutor(executorId: String): Boolean = super.killExecutor(executorId)
 
+  // SROE
+  /**
+   * :: DeveloperApi ::
+   * Request that cluster manager the kill an executor.
+   * This is currently only supported in Yarn mode. Return whether the request is received.
+   */
+  @DeveloperApi
+  override def killExecutor: Boolean = {
+    assert(supportDynamicAllocation,
+      "Killing executors is currently only supported in YARN mode")
+    schedulerBackend match {
+      case b: CoarseGrainedSchedulerBackend =>
+        b.killExecutor
+      case _ =>
+        logWarning("Killing executors is only supported in coarse-grained mode")
+        false
+    }
+  }
+
   /** The version of Spark on which this application is running. */
   def version = SPARK_VERSION
 

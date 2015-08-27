@@ -363,9 +363,12 @@ class CoarseGrainedSchedulerBackend(scheduler: TaskSchedulerImpl, val actorSyste
    * Return whether the kill request is acknowledged.
    */
   final override def killExecutors(executorIds: Seq[String]): Boolean = synchronized {
-    logInfo(s"Requesting to kill executor(s) ${executorIds.mkString(", ")}")
+    // SROE
+    val execIds = if(executorIds == null) Seq(executorDataMap.keySet.last) else executorIds
+
+    logInfo(s"Requesting to kill executor(s) ${execIds.mkString(", ")}")
     val filteredExecutorIds = new ArrayBuffer[String]
-    executorIds.foreach { id =>
+    execIds.foreach { id =>
       if (executorDataMap.contains(id)) {
         filteredExecutorIds += id
       } else {
@@ -380,6 +383,15 @@ class CoarseGrainedSchedulerBackend(scheduler: TaskSchedulerImpl, val actorSyste
 
     executorsPendingToRemove ++= filteredExecutorIds
     doKillExecutors(filteredExecutorIds)
+  }
+
+  // SROE
+  /**
+   * Request that the cluster manager kill a executor.
+   * Return whether the kill request is acknowledged.
+   */
+  final override def killExecutor: Boolean = synchronized {
+    killExecutors(Seq(executorDataMap.keySet.last))
   }
 
   /**
