@@ -68,10 +68,11 @@ final private[streaming] class DStreamGraph extends Serializable with Logging {
 
   def setBatchDuration(duration: Duration) {
     this.synchronized {
-      if (batchDuration != null) {
-        throw new Exception("Batch duration already set as " + batchDuration +
-          ". cannot set it again.")
-      }
+      // SROE
+//      if (batchDuration != null) {
+//        throw new Exception("Batch duration already set as " + batchDuration +
+//          ". cannot set it again.")
+//      }
       batchDuration = duration
     }
   }

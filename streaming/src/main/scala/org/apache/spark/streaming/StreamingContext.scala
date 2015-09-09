@@ -138,8 +138,8 @@ class StreamingContext private[streaming] (
   private[streaming] val env = SparkEnv.get
 
   // SROE
-  @transient private[streaming] val artManager = new ArtManager(this, conf)
-  println("ART Starting ArtManager! location: " + artManager )
+  @transient private[streaming] val artManager = new ArtManager(this, conf,
+    (millis: Long) => graph.setBatchDuration(Duration(millis)))
 
 
   private[streaming] val graph: DStreamGraph = {
