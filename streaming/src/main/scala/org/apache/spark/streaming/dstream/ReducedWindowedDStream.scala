@@ -58,7 +58,12 @@ class ReducedWindowedDStream[K: ClassTag, V: ClassTag](
   super.persist(StorageLevel.MEMORY_ONLY_SER)
   reducedStream.persist(StorageLevel.MEMORY_ONLY_SER)
 
-  def windowDuration: Duration =  _windowDuration
+  // SROE
+  // def windowDuration: Duration =  _windowDuration
+  var windowDuration: Duration =  _windowDuration
+
+  // SROE
+  ssc.setWindowDurationFunction((windowDuration: Duration) => this.windowDuration = windowDuration )
 
   override def dependencies = List(reducedStream)
 
@@ -85,6 +90,10 @@ class ReducedWindowedDStream[K: ClassTag, V: ClassTag](
     val invReduceF = invReduceFunc
 
     val currentTime = validTime
+
+    // SROE
+    println("#reducedWindowed windowDuration: " + windowDuration)
+
     val currentWindow = new Interval(currentTime - windowDuration + parent.slideDuration,
       currentTime)
     val previousWindow = currentWindow - slideDuration

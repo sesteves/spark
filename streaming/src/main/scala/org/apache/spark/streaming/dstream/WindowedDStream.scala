@@ -44,7 +44,12 @@ class WindowedDStream[T: ClassTag](
   // Persist parent level by default, as those RDDs are going to be obviously reused.
   parent.persist(StorageLevel.MEMORY_ONLY_SER)
 
-  def windowDuration: Duration =  _windowDuration
+  // SROE
+  // def windowDuration: Duration =  _windowDuration
+  var windowDuration: Duration =  _windowDuration
+
+  // SROE
+  ssc.setWindowDurationFunction((windowDuration: Duration) => this.windowDuration = windowDuration )
 
   override def dependencies = List(parent)
 

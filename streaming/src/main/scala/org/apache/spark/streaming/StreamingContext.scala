@@ -139,8 +139,22 @@ class StreamingContext private[streaming] (
 
   // SROE
   @transient private[streaming] val artManager = new ArtManager(this, conf,
-    (millis: Long) => graph.setBatchDuration(Duration(millis)))
+    (millis: Long) => graph.setBatchDuration(Duration(millis)),
+    (windowDuration: Duration) => setWindowDuration(windowDuration))
 
+  var windowDurationFunction: (Duration) => Unit = null
+
+  def setWindowDuration(windowDuration: Duration): Unit = {
+    if(windowDurationFunction != null) {
+      windowDurationFunction(windowDuration)
+    } else {
+     println("#windowDurationFunction is null!")
+    }
+  }
+
+  def setWindowDurationFunction(f: (Duration) => Unit): Unit = {
+    windowDurationFunction = f
+  }
 
   private[streaming] val graph: DStreamGraph = {
     if (isCheckpointPresent) {
