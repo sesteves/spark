@@ -22,16 +22,17 @@ import java.rmi.registry.LocateRegistry
 import org.apache.spark.{Logging, SparkEnv}
 import org.apache.spark.storage.{StorageLevel, StreamBlockId}
 import org.apache.spark.streaming.StreamingContext
-import pt.inescid.gsd.art.{RemoteArtManager, ArtManager}
+import pt.inescid.gsd.art.{ArtManager, RemoteArtManager}
 
 import scala.io.BufferedSource
 import scala.reflect.ClassTag
-
-import java.net.{Socket, InetAddress, InetSocketAddress}
+import java.net.{InetAddress, InetSocketAddress, Socket}
 import java.nio.ByteBuffer
 import java.nio.channels.{ReadableByteChannel, SocketChannel}
-import java.io.{PrintStream, EOFException}
+import java.io.{EOFException, PrintStream}
 import java.util.concurrent.ArrayBlockingQueue
+
+import com.sun.mail.iap.ConnectionException
 import org.apache.spark.streaming.receiver.Receiver
 
 import scala.util.Random
@@ -94,6 +95,18 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
     blockPushingThread.start()
 
     val lengthBuffer = ByteBuffer.allocate(4)
+
+    // find StreamingContext/Driver host
+    val driverHostname =
+      (1 to 6).map("ginja-a" + _).find(hostname =>
+        try {
+          new Socket(InetAddress.getByName(hostname), 9999)
+          true
+        } catch {
+          case ce: ConnectionException => false
+        }
+      ).get
+
     while (true) {
 
       val startTick = System.currentTimeMillis()
@@ -124,7 +137,7 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
 //      println("##### ArtManager currentAccuracy RMI: " + stub.getAccuracy())
 
       // FIXME maintain same socket always open
-      val s = new Socket(InetAddress.getByName("ginja-a1"), 9999)
+      val s = new Socket(InetAddress.getByName(driverHostname), 9999)
       val in = new BufferedSource(s.getInputStream()).getLines()
       val out = new PrintStream(s.getOutputStream())
       out.println(rate)
