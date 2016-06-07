@@ -99,7 +99,7 @@ class RawNetworkReceiver(host: String, port: Int, storageLevel: StorageLevel)
     val driverHostname =
       (1 to 6).map("ginja-a" + _).find(hostname =>
         try {
-          val socket = new Socket(InetAddress.getByName(hostname), 9999)
+          val socket = new Socket(InetAddress.getByName(hostname), 9998)
           socket.close()
           true
         } catch {
